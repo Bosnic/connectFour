@@ -1,9 +1,29 @@
+//Author: Darrell Lawrence
+//Purpose: Basic ConnectFour game w/ 2 players. Client/Server interaction will be implemented in next version.
+
 #include <iostream>
 #include <string>
 using namespace std;
 
 string board [7][6];
 int activePlayer = 1;
+
+//function declarations:
+void buildBoard();
+void printBoard();
+bool validMove();
+bool insertPiece(int colMove);
+bool checkWin();
+int player1Turn();
+int player2Turn();
+void turnController();
+
+int main(){
+    buildBoard ();
+    printBoard ();
+    
+    return 0;
+}
 
 void buildBoard(){
     int i;
@@ -28,47 +48,55 @@ void printBoard(){
     }
 }
 
-bool insertPiece(char move[]){
-    
+bool validMove(){
+    return false;
+}
+
+bool insertPiece(int colMove){
+    return false;
 }
 
 bool checkWin(){
+    return false;
+}
+
+int player1Turn(){
+    int move;
+    char input; //holds player input
+    cout << "Player 1's move. Input a column to insert your piece (1-7):";
+    cin >> input;
+    move = input - '0';
+    if (insertPiece(input)){ //attempts to put piece into the board. Returns false if an illegal move
+        if (checkWin()){
+            cout << "**Player 1 WINS!!!**";
+        }
+        else {
+            activePlayer = 2;
+            return 0;
+        }
+    }
+    else{ //if move isn't valid: reprints board for player to see and starts player 1's turn over
+        printBoard();
+        cout << "Please choose a valid position.";
+        activePlayer = 1;
+        return 0;
+    } 
+}
+
+int player2Turn(){
     
 }
 
-void takeTurn(int player){
-    char move[1];
-    bool validMove;
-    if (activePlayer = 1){ //player 1's turn
-        cout >> "Player 1's move. Choose a column to insert your piece (1-7):";
-        cin >> move;
-        validMove = insertPiece(move);
-        
-        if (validMove){
-            if (checkWin()){
-                cout << "**Player 1 WINS!!!**";
-            }
-            else {
-                takeTurn(2);
-            }
+void turnController(){
+    while(!checkWin()){
+        if (activePlayer = 1){ //player 1's turn
+            player1Turn(); 
         }
-        else{ //reprints board for player to see and starts player 1's turn over
-            printBoard();
-            cout >> "Please choose a valid position.";
-            takeTurn(1);
+        else{ //player 2's turn
+            
         }
     }
-    else {// player 2's turn
-        
-    }
-    
 }
 
-int main(){
-    buildBoard ();
-    printBoard ();
-    
-    return 0;
-}
 
 
