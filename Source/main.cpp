@@ -26,10 +26,8 @@ void turnController();
 void resetGame();
 
 int main(){
-    buildBoard ();
-    printBoard ();
-    turnController();
-    
+    resetGame();
+    cout << "\n\nThanks for playing!";
     return 0;
 }
 
@@ -81,7 +79,10 @@ bool checkTie(){
 }
 
 void resetGame(){
-    
+    activePlayer = 1;
+    buildBoard();
+    printBoard();
+    turnController();
 }
 
 int player1Turn(){
@@ -103,6 +104,12 @@ int player1Turn(){
         if (checkWin()){
             cout << "**Player 1 WINS!!!**";
             cout << "Do you want to play again? (Y/N): ";
+            string input;
+            getline(cin,input);
+            stringstream reset(input)
+            if (reset == "Y" || reset == "y"){
+                return 0;
+            }
         }
         
         else if (checkTie()){
