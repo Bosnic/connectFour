@@ -3,24 +3,32 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+
+#define HEIGHT 6
+#define WIDTH 7
+
 using namespace std;
 
-string board [7][6];
-int activePlayer = 1;
+string board [HEIGHT][WIDTH]; //Standard ConnectFour board side (6 rows, 7 columns)
+int activePlayer = 1; //Player 1 always moves first
+int wonGame = 0;
 
 //function declarations:
 void buildBoard();
 void printBoard();
-bool validMove();
 bool insertPiece(int colMove);
 bool checkWin();
+bool checkTie();
 int player1Turn();
 int player2Turn();
 void turnController();
+void resetGame();
 
 int main(){
     buildBoard ();
     printBoard ();
+    turnController();
     
     return 0;
 }
@@ -28,9 +36,9 @@ int main(){
 void buildBoard(){
     int i;
     int j;
-    for (i = 0;i < 6; i++){
-        for (j = 0;j < 7; j++){
-            board [i][j] = "[]";
+    for (i = 0;i < HEIGHT; i++){
+        for (j = 0;j < WIDTH; j++){
+            board [i][j] = "[ ]";
         }
     }
 }
@@ -38,62 +46,94 @@ void buildBoard(){
 void printBoard(){
     int i;
     int j;
-    for (i = 0;i < 6; i++){
+    for (i = 0;i < HEIGHT; i++){
         cout << "\n";
         cout << "|";
-        for (j = 0;j < 7; j++){
+        for (j = 0;j < WIDTH; j++){
             cout << board[i][j];
         }
         cout << "|";
     }
 }
 
-bool validMove(){
-    return false;
-}
-
-bool insertPiece(int colMove){
-    return false;
+bool insertPiece(int colMove){ // Receives player's move. Attempts to legally put piece on the board
+    return true;
 }
 
 bool checkWin(){
+    //if win set wonGame = 1
     return false;
+}
+
+bool checkTie(){
+    //walk through the entire array (board). If all positions are an X or an O then it is a tie
+    int i;
+    int j;
+    for (i = 0;i < HEIGHT; i++){
+        for (j = 0;j < WIDTH; j++){
+            if (board[i][j] != "[O]" && board[i][j] != "[X]"){
+                return false;
+            }
+        }
+    }
+     
+    return true;
+}
+
+void resetGame(){
+    
 }
 
 int player1Turn(){
     int move;
-    char input; //holds player input
-    cout << "Player 1's move. Input a column to insert your piece (1-7):";
-    cin >> input;
-    move = input - '0';
-    if (insertPiece(input)){ //attempts to put piece into the board. Returns false if an illegal move
+    string input; //holds player input
+     
+    cout << "\nPlayer 1's move. Input a column number to insert your piece (1-7):";
+    
+    getline(cin,input);
+    stringstream myStream(input);
+    myStream >> move;
+    
+    if (move > 7 || move < 1){ //validating that input is between 1-7
+        cout << "Invalid input";
+        return 0;
+    }
+        
+    if (insertPiece(move)){ //attempts to put piece into the board
         if (checkWin()){
             cout << "**Player 1 WINS!!!**";
+            cout << "Do you want to play again? (Y/N): ";
+        }
+        
+        else if (checkTie()){
+            cout << "**The match was a TIE!**";
+            cout << "Do you want to play again? (Y/N): ";
         }
         else {
             activePlayer = 2;
             return 0;
         }
     }
-    else{ //if move isn't valid: reprints board for player to see and starts player 1's turn over
+    else{ //if move isn't valid: reprints board for player to see and starts player's turn over
         printBoard();
-        cout << "Please choose a valid position.";
+        cout << "\nPlease choose a valid position."; //insertPiece() function should be the one to print the board and give the message(s)
         activePlayer = 1;
         return 0;
     } 
 }
 
 int player2Turn(){
-    
+    cout << "Player 2's turn";
+    wonGame = 1;
 }
 
 void turnController(){
-    while(!checkWin()){
-        if (activePlayer = 1){ //player 1's turn
+    while(wonGame == 0){
+        if (activePlayer == 1){ //player 1's turn
             player1Turn(); 
         }
         else{ //player 2's turn
-            
+            player2Turn();
         }
     }
 }
