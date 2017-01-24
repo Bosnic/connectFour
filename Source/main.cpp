@@ -22,7 +22,7 @@ bool checkWin();
 bool checkTie();
 int player1Turn();
 int player2Turn();
-void turnController();
+int turnController();
 void resetGame();
 
 int main(){
@@ -55,12 +55,12 @@ void printBoard(){
 }
 
 bool insertPiece(int colMove){ // Receives player's move. Attempts to legally put piece on the board
-    return true;
+    return false;
 }
 
 bool checkWin(){
     //if win set wonGame = 1
-    return false;
+    return true;
 }
 
 bool checkTie(){
@@ -74,15 +74,43 @@ bool checkTie(){
             }
         }
     }
-     
     return true;
 }
 
 void resetGame(){
-    activePlayer = 1;
-    buildBoard();
-    printBoard();
-    turnController();
+    wonGame = 0;
+    bool done = false;
+    while (!done){
+        activePlayer = 1;
+        buildBoard();
+        printBoard();
+        if (turnController() == 1){
+            wonGame = 0;
+            done = false;
+        }
+        else{
+            done = true;
+        }
+    }
+}
+
+int gameWon(){
+    wonGame = 1;
+    cout << "**Player " << activePlayer << " WINS!!!**" << endl;
+    cout << "Do you want to play again? (Y/N): " << endl;
+    string input;
+    getline(cin,input);
+    stringstream reset(input);
+    if (input == "Y" || input == "y"){
+        return 1;
+    }
+    else if (input == "N" || input == "n"){
+        return 0;
+    }
+    else{
+        cout << "Invalid input. Game over.";
+        return 0;
+    }
 }
 
 int player1Turn(){
@@ -95,52 +123,73 @@ int player1Turn(){
     stringstream myStream(input);
     myStream >> move;
     
-    if (move > 7 || move < 1){ //validating that input is between 1-7
-        cout << "Invalid input";
-        return 0;
+    bool validColumn = false;
+    while (!validColumn){
+        if (move > 7 || move < 1){ //validating that input is between 1-7
+            cout << "\nInvalid input";
+            printBoard();
+            cout << "\nPlayer 1's move. Input a column number to insert your piece (1-7):";
+
+            getline(cin,input);
+            stringstream myStream(input);
+            myStream >> move;
+        }
+        else{
+            validColumn = true;
+        }  
     }
         
     if (insertPiece(move)){ //attempts to put piece into the board
         if (checkWin()){
-            cout << "**Player 1 WINS!!!**";
-            cout << "Do you want to play again? (Y/N): ";
-            string input;
-            getline(cin,input);
-            stringstream reset(input)
-            if (reset == "Y" || reset == "y"){
-                return 0;
-            }
+            int returnNum;
+            returnNum = gameWon();
+            return returnNum;
+            
         }
         
         else if (checkTie()){
-            cout << "**The match was a TIE!**";
+            cout << "**The match was a TIE!**" << endl;
             cout << "Do you want to play again? (Y/N): ";
         }
         else {
-            activePlayer = 2;
-            return 0;
+            activePlayer = 2; //player 2's turn
+            return 2;
         }
     }
     else{ //if move isn't valid: reprints board for player to see and starts player's turn over
-        printBoard();
         cout << "\nPlease choose a valid position."; //insertPiece() function should be the one to print the board and give the message(s)
         activePlayer = 1;
-        return 0;
+        return 1;
     } 
 }
 
 int player2Turn(){
     cout << "Player 2's turn";
     wonGame = 1;
+    return 0;
 }
 
-void turnController(){
+int turnController(){
     while(wonGame == 0){
         if (activePlayer == 1){ //player 1's turn
-            player1Turn(); 
+            int player1Val;
+            player1Val = player1Turn();
+            if (player1Val == 1){ //returns 1 to reset game
+                return 1;
+            }
+            else if (player1Val == 0){
+                return  0;
+            }
         }
         else{ //player 2's turn
-            player2Turn();
+            int player2Val;
+            player2Val = player2Turn();
+            if (player2Val == 1){ //returns 1 to reset game
+                return 1;
+            }
+            else if (player2Val == 0){
+                return 0;
+            }
         }
     }
 }
