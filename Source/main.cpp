@@ -24,6 +24,7 @@ int player1Turn();
 int player2Turn();
 int turnController();
 void resetGame();
+int playAgain();
 
 int main(){
     resetGame();
@@ -54,13 +55,45 @@ void printBoard(){
     }
 }
 
-bool insertPiece(int colMove){ // Receives player's move. Attempts to legally put piece on the board
+bool insertPiece(int colMove){ //Receives player's move. Attempts to legally put piece on the board in that column
+    /* 
+     * Go to column
+     * go to the bottom row of column
+     * check to see if there is a piece there (X or O)
+     * if no piece: 
+     *  -place activePlayer's piece at that location
+     *  -return true (that column had space to place a new piece)
+     * if there is a piece:
+     *  -am I on the last row?
+     *      if yes:
+     *          -return false (not a valid column to insert a piece)
+     *      if no:
+     *          -move up 1 row and repeat
+    */
+    int row = HEIGHT - 1;
+    int col = colMove - 1;
+    for (row; (row >= 0); row--){
+        if (board[row][col] != "[O]" && board[row][col] != "[X]"){
+            if (activePlayer == 1){
+                board[row][col] = "[X]";
+                return true;
+            }
+            else{
+                board[row][col] = "[O]";
+                return true;
+            }
+        }
+    }
+    
     return false;
 }
 
 bool checkWin(){
-    //if win set wonGame = 1
-    return true;
+    /*
+     * 
+     */
+    //Note: if win set wonGame = 1
+    return false;
 }
 
 bool checkTie(){
@@ -83,6 +116,7 @@ void resetGame(){
     while (!done){
         activePlayer = 1;
         buildBoard();
+        cout << "New Game!";
         printBoard();
         if (turnController() == 1){
             wonGame = 0;
@@ -96,11 +130,18 @@ void resetGame(){
 
 int gameWon(){
     wonGame = 1;
+    int newGame = 0;
     cout << "**Player " << activePlayer << " WINS!!!**" << endl;
+    newGame = playAgain();
+    return newGame;
+}
+
+int playAgain(){
     cout << "Do you want to play again? (Y/N): " << endl;
     string input;
     getline(cin,input);
     stringstream reset(input);
+    
     if (input == "Y" || input == "y"){
         return 1;
     }
@@ -112,6 +153,7 @@ int gameWon(){
         return 0;
     }
 }
+
 
 int player1Turn(){
     int move;
@@ -138,35 +180,89 @@ int player1Turn(){
             validColumn = true;
         }  
     }
-        
-    if (insertPiece(move)){ //attempts to put piece into the board
+    
+    bool validMove = false;
+    validMove = insertPiece(move);
+    if (validMove){ 
         if (checkWin()){
             int returnNum;
             returnNum = gameWon();
-            return returnNum;
-            
+            return returnNum;    
         }
         
         else if (checkTie()){
             cout << "**The match was a TIE!**" << endl;
-            cout << "Do you want to play again? (Y/N): ";
+            int newGame = 0;
+            newGame = playAgain();
+            return newGame;
         }
         else {
+            printBoard();
             activePlayer = 2; //player 2's turn
             return 2;
         }
     }
     else{ //if move isn't valid: reprints board for player to see and starts player's turn over
-        cout << "\nPlease choose a valid position."; //insertPiece() function should be the one to print the board and give the message(s)
+        cout << "\nPlease choose a valid position.";
+        printBoard();
         activePlayer = 1;
-        return 1;
+        return 3; //Note: there is no difference between returning 2 or 3. This is just to indicate that something else will happen given variable values at the time
     } 
 }
 
 int player2Turn(){
-    cout << "Player 2's turn";
-    wonGame = 1;
-    return 0;
+    int move;
+    string input; //holds player input
+     
+    cout << "\nPlayer 2's move. Input a column number to insert your piece (1-7):";
+    
+    getline(cin,input);
+    stringstream myStream(input);
+    myStream >> move;
+    
+    bool validColumn = false;
+    while (!validColumn){
+        if (move > 7 || move < 1){ //validating that input is between 1-7
+            cout << "\nInvalid input";
+            printBoard();
+            cout << "\nPlayer 2's move. Input a column number to insert your piece (1-7):";
+
+            getline(cin,input);
+            stringstream myStream(input);
+            myStream >> move;
+        }
+        else{
+            validColumn = true;
+        }  
+    }
+    
+    bool validMove = false;
+    validMove = insertPiece(move);
+    if (validMove){ 
+        if (checkWin()){
+            int returnNum;
+            returnNum = gameWon();
+            return returnNum;    
+        }
+        
+        else if (checkTie()){
+            cout << "**The match was a TIE!**" << endl;
+            int newGame = 0;
+            newGame = playAgain();
+            return newGame;
+        }
+        else {
+            printBoard();
+            activePlayer = 1; //player 1's turn
+            return 2;
+        }
+    }
+    else{ //if move isn't valid: reprints board for player to see and starts player's turn over
+        cout << "\nPlease choose a valid position.";
+        printBoard();
+        activePlayer = 2;
+        return 3; //Note: there is no difference between returning 2 or 3. This is just to indicate that something else will happen given variable values at the time
+    }
 }
 
 int turnController(){
@@ -177,7 +273,7 @@ int turnController(){
             if (player1Val == 1){ //returns 1 to reset game
                 return 1;
             }
-            else if (player1Val == 0){
+            else if (player1Val == 0){ //returns 0
                 return  0;
             }
         }
