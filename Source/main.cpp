@@ -89,9 +89,23 @@ bool insertPiece(int colMove){ //Receives player's move. Attempts to legally put
 }
 
 bool checkWin(){
+    
     /*
-     * 
-     */
+    *Get valid entry
+    *check direction. Is there a "wall" (end of board)?
+    *   if no:
+    *       Is that direction the same value?
+    *           if yes:
+    *               -add to counter
+    *               -does counter = 4? 
+    *                   if yes: return true
+    *                   if no: repeat with that direction
+    *           if no:
+    *               -check next direction
+    *   if yes:
+    *       -check next direction
+    * 
+    */
     //Note: if win set wonGame = 1
     return false;
 }
@@ -183,8 +197,10 @@ int player1Turn(){
     
     bool validMove = false;
     validMove = insertPiece(move);
-    if (validMove){ 
-        if (checkWin()){
+    if (validMove){
+        bool winValue;
+        winValue = checkWin();
+        if (winValue){
             int returnNum;
             returnNum = gameWon();
             return returnNum;    
