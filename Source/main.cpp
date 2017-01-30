@@ -17,8 +17,8 @@ int wonGame = 0;
 //function declarations:
 void buildBoard();
 void printBoard();
-bool insertPiece(int colMove);
-bool checkWin();
+int insertPiece(int colMove);
+bool checkWin(int rowVal, int columnVal);
 bool checkTie();
 int player1Turn();
 int player2Turn();
@@ -55,7 +55,7 @@ void printBoard(){
     }
 }
 
-bool insertPiece(int colMove){ //Receives player's move. Attempts to legally put piece on the board in that column
+int insertPiece(int colMove){ //Receives player's move. Attempts to legally put piece on the board in that column
     /* 
      * Go to column
      * go to the bottom row of column
@@ -76,19 +76,19 @@ bool insertPiece(int colMove){ //Receives player's move. Attempts to legally put
         if (board[row][col] != "[O]" && board[row][col] != "[X]"){
             if (activePlayer == 1){
                 board[row][col] = "[X]";
-                return true;
             }
             else{
-                board[row][col] = "[O]";
-                return true;
+                board[row][col] = "[O]";             
             }
+            cout << "\nPlayer " << activePlayer << "'s Move: Row " << row + 1 << ", Column " << col + 1; 
+            return row;
         }
     }
     
-    return false;
+    return -1; //not a valid move
 }
 
-bool checkWin(){
+bool checkWin(int rowVal, int columnVal){
     
     /*
     *Get valid entry
@@ -101,12 +101,20 @@ bool checkWin(){
     *                   if yes: return true
     *                   if no: repeat with that direction
     *           if no:
+     *              -reset counter
     *               -check next direction
     *   if yes:
     *       -check next direction
     * 
+    *
+    * 
+    * 
     */
-    //Note: if win set wonGame = 1
+    if (rowVal == 2){ // test case
+        return true;
+    }
+    
+    
     return false;
 }
 
@@ -130,7 +138,7 @@ void resetGame(){
     while (!done){
         activePlayer = 1;
         buildBoard();
-        cout << "New Game!";
+        cout << "\n\n**New Game!**";
         printBoard();
         if (turnController() == 1){
             wonGame = 0;
@@ -145,13 +153,14 @@ void resetGame(){
 int gameWon(){
     wonGame = 1;
     int newGame = 0;
-    cout << "**Player " << activePlayer << " WINS!!!**" << endl;
+    cout << "\n\n**Player " << activePlayer << " WINS!!!**" << endl;
+    printBoard();
     newGame = playAgain();
     return newGame;
 }
 
 int playAgain(){
-    cout << "Do you want to play again? (Y/N): " << endl;
+    cout << "\nDo you want to play again? (Y/N): ";
     string input;
     getline(cin,input);
     stringstream reset(input);
@@ -195,6 +204,7 @@ int player1Turn(){
         }  
     }
     
+    /*
     bool validMove = false;
     validMove = insertPiece(move);
     if (validMove){
@@ -204,8 +214,20 @@ int player1Turn(){
             int returnNum;
             returnNum = gameWon();
             return returnNum;    
+        } */
+    int colVal = move;
+    int rowVal = 0;
+    rowVal = insertPiece(colVal);
+    if (rowVal != -1){
+        bool winValue;
+        winValue = checkWin(rowVal, colVal);
+        if (winValue){
+            int returnNum;
+            returnNum = gameWon();
+            return returnNum;    
         }
-        
+
+    
         else if (checkTie()){
             cout << "**The match was a TIE!**" << endl;
             int newGame = 0;
@@ -252,10 +274,13 @@ int player2Turn(){
         }  
     }
     
-    bool validMove = false;
-    validMove = insertPiece(move);
-    if (validMove){ 
-        if (checkWin()){
+    int colVal = move;
+    int rowVal = 0;
+    rowVal = insertPiece(colVal);
+    if (rowVal != -1){
+        bool winValue;
+        winValue = checkWin(rowVal, colVal);
+        if (winValue){
             int returnNum;
             returnNum = gameWon();
             return returnNum;    
