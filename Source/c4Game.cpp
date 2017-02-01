@@ -68,37 +68,110 @@ int c4Game::insertPiece(int colMove){ //Receives player's move. Attempts to lega
             cout << "\nPlayer " << activePlayer << "'s Move: Row " << row + 1 << ", Column " << col + 1; 
             return row;
         }
-    }
-    
+    } 
     return -1; //not a valid move
 }
 
-bool c4Game::checkWin(int rowVal, int columnVal){
-    
+bool c4Game::checkWin(int rowVal, int columnVal){ //Note: rowVal is array value, columnVal is player's input value (off by 1)
+    columnVal = columnVal - 1;
     /*
     *Get valid entry
-    *check direction. Is there a "wall" (end of board)?
+    *check 3 spaces over in direction. Is there a wall? (Note: never have to check straight up)
     *   if no:
-    *       Is that direction the same value?
+    *       Are all 4 values the same?
     *           if yes:
-    *               -add to counter
-    *               -does counter = 4? 
-    *                   if yes: return true
-    *                   if no: repeat with that direction
-    *           if no:
-     *              -reset counter
-    *               -check next direction
+    *               return true
+    *           if no: 
+    *              try with next direction
     *   if yes:
-    *       -check next direction
-    * 
-    *
-    * 
-    * 
-    */
-    if (rowVal == 2){ // test case
-        return true;
+    *       check next direction
+    */      
+    int row = rowVal;
+    int col = columnVal;
+    
+    //check NE (NorthEast)
+    //NE (row -1, column + 1)  
+    if ((row - 3 >= 0) && (col + 3 <= 6)){
+        //check for matches
+        if ((board[row][col] == board[row-1][col+1]) &&
+            (board[row][col] == board[row-2][col+2]) &&
+            (board[row][col] == board[row-3][col+3])){
+            
+            return true;       
+        }
+    } 
+    
+    //check E (East)
+    //E (column +1)
+    if (col + 3 <= 6){
+        //check for matches
+        if ((board[row][col] == board[row][col+1]) &&
+            (board[row][col] == board[row][col+2]) &&
+            (board[row][col] == board[row][col+3])){
+            
+            return true;       
+        }
     }
     
+    //check SE (SouthEast)
+    //SE (row +1, column + 1)
+    if ((row + 3 <= 5) && (col + 3 <= 6)){
+        //check for matches
+        if ((board[row][col] == board[row+1][col+1]) &&
+            (board[row][col] == board[row+2][col+2]) &&
+            (board[row][col] == board[row+3][col+3])){
+            
+            return true;       
+        }
+    }
+    
+    //check S (South)
+    //S (row + 1)
+    if (row + 3 <= 5){
+        //check for matches
+        if ((board[row][col] == board[row+1][col]) &&
+            (board[row][col] == board[row+2][col]) &&
+            (board[row][col] == board[row+3][col])){
+            
+            return true;       
+        }
+    }
+    
+    //check SW (SouthWest)
+    //SW (row +1, column -1)
+    if ((row + 3 <= 5) && (col - 3 >= 0)){
+        //check for matches
+        if ((board[row][col] == board[row+1][col-1]) &&
+            (board[row][col] == board[row+2][col-2]) &&
+            (board[row][col] == board[row+3][col-3])){
+            
+            return true;       
+        }
+    }
+    
+    //check W (West)
+    //W (column -1)
+    if (col - 3 >= 0){
+        //check for matches
+        if ((board[row][col] == board[row][col-1]) &&
+            (board[row][col] == board[row][col-2]) &&
+            (board[row][col] == board[row][col-3])){
+            
+            return true;       
+        }
+    }
+    
+    //check NW (NorthWest)
+    //NW (row -1, column -1)
+    if ((row - 3 >= 0) && (col - 3 >= 0)){
+        //check for matches
+        if ((board[row][col] == board[row-1][col-1]) &&
+            (board[row][col] == board[row-2][col-2]) &&
+            (board[row][col] == board[row-3][col-3])){
+            
+            return true;       
+        }
+    }
     
     return false;
 }
@@ -123,7 +196,7 @@ void c4Game::newGame(){
     while (!done){
         activePlayer = 1;
         buildBoard();
-        cout << "\n\n**New Game!**";
+        cout << "\n\n**New Game!**  Player 1: X, Player 2: O";
         printBoard();
         if (turnController() == 1){
             wonGame = 0;
@@ -162,7 +235,6 @@ int c4Game::playAgain(){
         return 0;
     }
 }
-
 
 int c4Game::player1Turn(){
     int move;
@@ -203,7 +275,8 @@ int c4Game::player1Turn(){
         }
 
         else if (checkTie()){
-            cout << "**The match was a TIE!**" << endl;
+            cout << "\n**The match was a TIE!**" << endl;
+            printBoard();
             int newGame = 0;
             newGame = playAgain();
             return newGame;
@@ -261,7 +334,8 @@ int c4Game::player2Turn(){
         }
         
         else if (checkTie()){
-            cout << "**The match was a TIE!**" << endl;
+            cout << "\n**The match was a TIE!**" << endl;
+            printBoard();
             int newGame = 0;
             newGame = playAgain();
             return newGame;
