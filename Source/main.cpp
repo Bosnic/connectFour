@@ -1,5 +1,6 @@
 //Author: Darrell Lawrence
 //Purpose: Basic ConnectFour game w/ 2 players. Client/Server interaction will be implemented in next version.
+//Created: Jan 2017
 
 #include <iostream>
 #include <string>

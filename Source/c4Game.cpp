@@ -1,5 +1,6 @@
 //Author: Darrell Lawrence
 //Purpose: Basic ConnectFour game w/ 2 players. Client/Server interaction will be implemented in next version.
+//Created: Jan 2017
 
 #include <iostream>
 #include <string>
@@ -73,7 +74,7 @@ int c4Game::insertPiece(int colMove){ //Receives player's move. Attempts to lega
 }
 
 bool c4Game::checkWin(int rowVal, int columnVal){ //Note: rowVal is array value, columnVal is player's input value (off by 1)
-    columnVal = columnVal - 1;
+    columnVal = columnVal - 1; //correcting columnVal to match array values
     /*
     *Get valid entry
     *check 3 spaces over in direction. Is there a wall? (Note: never have to check straight up)
@@ -171,8 +172,7 @@ bool c4Game::checkWin(int rowVal, int columnVal){ //Note: rowVal is array value,
             
             return true;       
         }
-    }
-    
+    }  
     return false;
 }
 
